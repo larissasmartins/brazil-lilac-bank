@@ -87,7 +87,7 @@ const displayMovements = function (movements) {
     const html = `
       <div class="movements__row">
         <div class="movements__type movements__type--${typeMov}">${i + 1} ${typeMov}</div>
-        <div class="movements__value">${mov}</div>
+        <div class="movements__value">${mov}€</div>
       </div>
     `;
     // return console.log(typeMov);
@@ -100,12 +100,28 @@ const displayMovements = function (movements) {
 };
 displayMovements(account1.movements);
 
-/* Display balance ---------------------------------------- */
-const displayCalcBalance = function (movements) {
-  const balance = movements.reduce((acc, mov) => acc + mov, 0);
-  labelBalance.textContent = `${balance} €`;
+
+/* Sum of the movements ---------------------------------------------- */
+const calcDisplaySummary = function (movements) {
+  const incomes = movements
+    .filter(mov => mov > 0)
+    .reduce((acc, mov) => acc + mov, 0);
+  labelSumIn.textContent = `${incomes}€`;
+
+  const out = movements
+    .filter(mov => mov < 0)
+    .reduce((acc, mov) => acc + mov, 0);
+  labelSumOut.textContent = `${Math.abs(out)}€`;
+
+  const interest = movements
+    .filter(mov => mov > 0)
+    .map(deposit => deposit * 1.2 / 100)
+    .filter((int => int >= 1))
+    .reduce((acc, int) => acc + int, 0);
+  labelSumInterest.textContent = `${interest}€`
 };
-displayCalcBalance(account1.movements);
+calcDisplaySummary(account1.movements);
+
 
 /* Compute user's username creating a new property on the objects --------------------------------- */
 const createUsernames = function (accs) {
@@ -120,58 +136,13 @@ const createUsernames = function (accs) {
 };
 createUsernames(accounts);
 
+/* Display balance ---------------------------------------- */
+const displayCalcBalance = function (movements) {
+  const balance = movements.reduce((acc, mov) => acc + mov, 0);
+  labelBalance.textContent = `${balance}€`;
+};
+displayCalcBalance(account1.movements);
+
 /* Deposits and withdrawals array ------------------------ */
 const deposits = movements.filter(mov => mov > 0); //filter the movements under 0;
 const withdrawals = movements.filter(mov => mov < 0); ////filter the movements above 0;
-
-
-
-
-
-
-
-
-/* Convert currency function ----------------------------- */
-// const eurToUSD = 1.1;
-
-// const movementsUSD = movements.map(mov => (mov * eurToUSD).toFixed());
-// console.log(movementsUSD);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// const checkDogs = function (dogsJulia, dogsKate) {
-//   const dogsJ = dogsJulia.slice(1, 3);
-//   const allDogs = dogsJ.concat(dogsKate);
-
-//   allDogs.forEach(function (age, i) {
-//     const dogAge = age >= 3 ? `Dog number ${i + 1} is an adult, and is ${age} years old` : `Dog number ${i + 1} is still a puppy`;
-
-//     return console.log(dogAge);
-//   });
-
-// }
-// checkDogs([9, 16, 6, 8, 3], [10, 5, 6, 1, 4]);
-
-
-
-// // TEST DATA 1: Julia's data [3, 5, 2, 12, 7], Kate's data [4, 1, 15, 8, 3]
-// // TEST DATA 2: Julia's data [9, 16, 6, 8, 3], Kate's data [10, 5, 6, 1, 4]
