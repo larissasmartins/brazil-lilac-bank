@@ -102,21 +102,23 @@ const displayMovements = function (movements) {
 
 
 /* Sum of the movements ---------------------------------------------- */
-const calcDisplaySummary = function (movements) {
-  const incomes = movements
+const calcDisplaySummary = function (account) {
+  const incomes = account.movements
     .filter(mov => mov > 0)
     .reduce((acc, mov) => acc + mov, 0);
   labelSumIn.textContent = `${incomes}€`;
 
-  const out = movements
+  const out = account.movements
     .filter(mov => mov < 0)
     .reduce((acc, mov) => acc + mov, 0);
   labelSumOut.textContent = `${Math.abs(out)}€`;
 
-  const interest = movements
+  const interest = account.movements
     .filter(mov => mov > 0)
-    .map(deposit => deposit * 1.2 / 100)
-    .filter((int => int >= 1))
+    .map(deposit => (deposit * account.interestRate) / 100)
+    .filter((int, i, arr) => {
+      return int >= 1;
+    })
     .reduce((acc, int) => acc + int, 0);
   labelSumInterest.textContent = `${interest}€`
 };
@@ -163,8 +165,8 @@ btnLogin.addEventListener('click', function (event) {
 
     // display movements, balance and summary (call the functions)
     displayMovements(currentAccount.movements);
-    calcDisplaySummary(currentAccount.movements);
     displayCalcBalance(currentAccount.movements);
+    calcDisplaySummary(currentAccount);
 
     // Clear input fields 
     inputLoginUsername.value = "";
