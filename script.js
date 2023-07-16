@@ -143,7 +143,7 @@ const updateInterface = function (account) {
   displayMovements(currentAccount.movements);
   displayCalcBalance(currentAccount);
   calcDisplaySummary(currentAccount);
-}
+};
 
 /* Display balance ---------------------------------------- */
 const displayCalcBalance = function (account) {
@@ -191,12 +191,26 @@ btnTransfer.addEventListener('click', function (event) {
   inputLoginPin.value = "";
   inputLoginPin.blur();
 
-
   if (amount > 0 && receiverAcc && currentAccount.balance >= amount && receiverAcc.username !== currentAccount.username) {
     currentAccount.movements.push(-amount);
     receiverAcc.movements.push(amount);
 
     updateInterface(currentAccount);
   };
+});
 
+/* Close account function --------------------------------- */
+btnClose.addEventListener('click', function (event) {
+  event.preventDefault();
+
+  if (currentAccount.value === inputCloseUsername.username && Number(inputClosePin.value) === currentAccount.pin) {
+    const index = accounts.findIndex(acc => acc.username === currentAccount.username);
+
+    accounts.splice(index, 1); // Delete account
+    containerApp.style.opacity = 0; // Hide UI
+  };
+
+  // Clear input fields 
+  inputCloseUsername.value = "";
+  inputClosePin.value = "";
 });
