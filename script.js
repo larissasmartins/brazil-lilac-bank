@@ -138,10 +138,17 @@ const createUsernames = function (accs) {
 };
 createUsernames(accounts);
 
+const updateInterface = function (account) {
+  // display movements, balance and summary (call the functions)
+  displayMovements(currentAccount.movements);
+  displayCalcBalance(currentAccount);
+  calcDisplaySummary(currentAccount);
+}
+
 /* Display balance ---------------------------------------- */
-const displayCalcBalance = function (movements) {
-  const balance = movements.reduce((acc, mov) => acc + mov, 0);
-  labelBalance.textContent = `${balance}€`;
+const displayCalcBalance = function (account) {
+  account.balance = account.movements.reduce((acc, mov) => acc + mov, 0);
+  labelBalance.textContent = `${account.balance}€`;
 };
 // displayCalcBalance(account1.movements);
 
@@ -163,14 +170,33 @@ btnLogin.addEventListener('click', function (event) {
     containerApp.style.opacity = 100;
     labelWelcome.textContent = `Welcome back, ${currentAccount.owner.split(' ')[0]}!`;
 
-    // display movements, balance and summary (call the functions)
-    displayMovements(currentAccount.movements);
-    displayCalcBalance(currentAccount.movements);
-    calcDisplaySummary(currentAccount);
-
     // Clear input fields 
     inputLoginUsername.value = "";
     inputLoginPin.value = "";
     inputLoginPin.blur();
+
+    updateInterface(currentAccount);
   }
+});
+
+
+/* Transfer money from one user to another --------------- */
+btnTransfer.addEventListener('click', function (event) {
+  event.preventDefault(); // prevent the form from submitting and prevent to reload the page
+
+  const receiverAcc = accounts.find(acc => acc.username === inputTransferTo.value);
+  const amount = Number(inputTransferAmount.value);
+  // Clear input fields 
+  inputLoginUsername.value = "";
+  inputLoginPin.value = "";
+  inputLoginPin.blur();
+
+
+  if (amount > 0 && receiverAcc && currentAccount.balance >= amount && receiverAcc.username !== currentAccount.username) {
+    currentAccount.movements.push(-amount);
+    receiverAcc.movements.push(amount);
+
+    updateInterface(currentAccount);
+  };
+
 });
