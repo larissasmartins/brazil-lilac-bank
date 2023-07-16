@@ -78,10 +78,12 @@ const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 
 /* Show movements on dashboard function ------------------------ */
 //Good practice to pass the data directly into the function
-const displayMovements = function (movements) {
+const displayMovements = function (movements, sort = false) {
   containerMovements.innerHTML = '';
 
-  movements.forEach(function (mov, i) {
+  const moves = sort ? movements.slice().sort((a, b) => a - b) : movements;
+
+  moves.forEach(function (mov, i) {
     const typeMov = mov > 0 ? `deposit` : `withdrawal`;
 
     const html = `
@@ -213,4 +215,12 @@ btnClose.addEventListener('click', function (event) {
   // Clear input fields 
   inputCloseUsername.value = "";
   inputClosePin.value = "";
+});
+
+let sorted = false;
+
+btnSort.addEventListener('click', function (event) {
+  event.preventDefault();
+  displayMovements(currentAccount.movements, !sorted);
+  sorted = !sorted;
 });
