@@ -248,7 +248,7 @@ btnLogin.addEventListener('click', function (event) {
   if (currentAccount?.pin === +(inputLoginPin.value)) {
     // display UI and welcome message
     containerApp.style.opacity = 100;
-    labelWelcome.textContent = `Welcome back, ${currentAccount.owner.split(' ')[0]} !`;
+    labelWelcome.textContent = `Welcome back, ${currentAccount.owner.split(' ')[0]}!`;
 
     // Current date and time
     const now = new Date();
@@ -302,14 +302,17 @@ btnLoan.addEventListener('click', function (event) {
   const amount = Math.floor(inputLoanAmount.value);
 
   if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
-    //Add movement
-    currentAccount.movements.push(amount);
 
-    //Add transfer date
-    currentAccount.movementsDates.push(new Date().toISOString());
+    setTimeout(function () {
+      //Add movement
+      currentAccount.movements.push(amount);
 
-    //Update Interface
-    updateInterface(currentAccount);
+      //Add transfer date
+      currentAccount.movementsDates.push(new Date().toISOString());
+
+      //Update Interface
+      updateInterface(currentAccount);
+    }, 3000);
   }
   inputLoanAmount.value = '';
 });
