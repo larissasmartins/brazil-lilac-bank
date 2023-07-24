@@ -22,7 +22,7 @@ const account1 = {
     '2023-07-23T10:51:36.790Z',
   ],
   currency: 'EUR',
-  local: 'pt-PT', // de-DE
+  local: 'en-GB'
 };
 
 const account2 = {
@@ -42,7 +42,7 @@ const account2 = {
     '2020-07-26T12:01:20.894Z',
   ],
   currency: 'USD',
-  local: 'en-US',
+  local: 'en-US'
 };
 
 const account3 = {
@@ -82,7 +82,7 @@ const account4 = {
     '2023-10-20T12:01:20.894Z',
   ],
   currency: 'EUR',
-  local: 'es-ES',
+  local: 'en-GB',
 };
 
 const accounts = [account1, account2, account3, account4];
@@ -144,6 +144,12 @@ const formatMovementDate = function (date, local) {
   }
 }
 
+const formatCurrency = function (value, local, currency) {
+  return new Intl.NumberFormat(local, {
+    style: 'currency',
+    currency: currency
+  }).format(value);
+};
 
 /* Show movements on dashboard function ------------------------ */
 //Good practice to pass the data directly into the function
@@ -157,12 +163,13 @@ const displayMovements = function (acc, sort = false) {
 
     const date = new Date(acc.movementsDates[i]);
     const displayDate = formatMovementDate(date, acc.local);
+    const formattedMovement = formatCurrency(mov, acc.local, acc.currency);
 
     const html = `
       <div class="movements__row">
         <div class="movements__type movements__type--${typeMov}">${i + 1} ${typeMov}</div>
         <div class="movements__date">${displayDate}</div>
-        <div class="movements__value">${mov.toFixed(2)}€</div>
+        <div class="movements__value">${formattedMovement}</div>
       </div>
     `;
     // return console.log(typeMov);
@@ -171,9 +178,15 @@ const displayMovements = function (acc, sort = false) {
     containerMovements.insertAdjacentHTML('afterbegin', html); //after begin to appear any new child element after the old ones
 
   });
-
 };
-// displayMovements(account1.movements);
+
+
+/* Display balance ---------------------------------------- */
+const displayCalcBalance = function (account) {
+  account.balance = account.movements.reduce((acc, mov) => acc + mov, 0);
+
+  labelBalance.textContent = formatCurrency(account.balance, account.local, account.currency);
+};
 
 
 /* Sum of the movements ---------------------------------------------- */
@@ -181,12 +194,12 @@ const calcDisplaySummary = function (account) {
   const incomes = account.movements
     .filter(mov => mov > 0)
     .reduce((acc, mov) => acc + mov, 0);
-  labelSumIn.textContent = `${incomes.toFixed(2)}€`;
+  labelSumIn.textContent = formatCurrency(incomes, account.local, account.currency);
 
   const out = account.movements
     .filter(mov => mov < 0)
     .reduce((acc, mov) => acc + mov, 0);
-  labelSumOut.textContent = `${Math.abs(out).toFixed(2)}€`;
+  labelSumOut.textContent = formatCurrency(Math.abs(out), account.local, account.currency);
 
   const interest = account.movements
     .filter(mov => mov > 0)
@@ -195,9 +208,8 @@ const calcDisplaySummary = function (account) {
       return int >= 1;
     })
     .reduce((acc, int) => acc + int, 0);
-  labelSumInterest.textContent = `${interest.toFixed(2)}€`
+  labelSumInterest.textContent = formatCurrency(interest, account.local, account.currency);
 };
-// calcDisplaySummary(account1.movements);
 
 
 /* Compute user's username creating a new property on the objects --------------------------------- */
@@ -220,13 +232,6 @@ const updateInterface = function (account) {
   calcDisplaySummary(currentAccount);
 };
 
-/* Display balance ---------------------------------------- */
-const displayCalcBalance = function (account) {
-  account.balance = account.movements.reduce((acc, mov) => acc + mov, 0);
-  labelBalance.textContent = `${account.balance.toFixed(2)}€`;
-};
-// displayCalcBalance(account1.movements);
-
 /* Deposits and withdrawals array ------------------------ */
 const deposits = movements.filter(mov => mov > 0); //filter the movements under 0;
 const withdrawals = movements.filter(mov => mov < 0); ////filter the movements above 0;
@@ -234,12 +239,6 @@ const withdrawals = movements.filter(mov => mov < 0); ////filter the movements a
 
 /* LOGIN event handles ------------------------------------ */
 let currentAccount;
-
-//FAKED LOGGED IN
-currentAccount = account1;
-updateInterface(currentAccount);
-containerApp.style.opacity = 100;
-
 
 btnLogin.addEventListener('click', function (event) {
   event.preventDefault(); // prevent the form from submitting and prevent to reload the page
