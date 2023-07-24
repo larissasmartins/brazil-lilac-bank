@@ -117,18 +117,25 @@ const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 
 /* Show movements on dashboard function ------------------------ */
 //Good practice to pass the data directly into the function
-const displayMovements = function (movements, sort = false) {
+const displayMovements = function (acc, sort = false) {
   containerMovements.innerHTML = '';
 
-  const moves = sort ? movements.slice().sort((a, b) => a - b) : movements;
+  const moves = sort ? acc.movements.slice().sort((a, b) => a - b) : acc.movements;
 
   moves.forEach(function (mov, i) {
     const typeMov = mov > 0 ? `deposit` : `withdrawal`;
 
+    const date = new Date(acc.movementsDates[i]);
+    const day = `${date.getDate()}`.padStart(2, 0);
+    const month = `${date.getMonth() + 1}`.padStart(2, 0);
+    const year = date.getFullYear();
+    const displayDate = `${day}/${month}/${year}`;
+
     const html = `
       <div class="movements__row">
         <div class="movements__type movements__type--${typeMov}">${i + 1} ${typeMov}</div>
-        <div class="movements__value">${mov}€</div>
+        <div class="movements__date">${displayDate}</div>
+        <div class="movements__value">${mov.toFixed(2)}€</div>
       </div>
     `;
     // return console.log(typeMov);
@@ -147,12 +154,12 @@ const calcDisplaySummary = function (account) {
   const incomes = account.movements
     .filter(mov => mov > 0)
     .reduce((acc, mov) => acc + mov, 0);
-  labelSumIn.textContent = `${incomes}€`;
+  labelSumIn.textContent = `${incomes.toFixed(2)}€`;
 
   const out = account.movements
     .filter(mov => mov < 0)
     .reduce((acc, mov) => acc + mov, 0);
-  labelSumOut.textContent = `${Math.abs(out)}€`;
+  labelSumOut.textContent = `${Math.abs(out).toFixed(2)}€`;
 
   const interest = account.movements
     .filter(mov => mov > 0)
@@ -161,7 +168,7 @@ const calcDisplaySummary = function (account) {
       return int >= 1;
     })
     .reduce((acc, int) => acc + int, 0);
-  labelSumInterest.textContent = `${interest}€`
+  labelSumInterest.textContent = `${interest.toFixed(2)}€`
 };
 // calcDisplaySummary(account1.movements);
 
@@ -181,7 +188,7 @@ createUsernames(accounts);
 
 const updateInterface = function (account) {
   // display movements, balance and summary (call the functions)
-  displayMovements(currentAccount.movements);
+  displayMovements(currentAccount);
   displayCalcBalance(currentAccount);
   calcDisplaySummary(currentAccount);
 };
@@ -189,7 +196,7 @@ const updateInterface = function (account) {
 /* Display balance ---------------------------------------- */
 const displayCalcBalance = function (account) {
   account.balance = account.movements.reduce((acc, mov) => acc + mov, 0);
-  labelBalance.textContent = `${account.balance}€`;
+  labelBalance.textContent = `${account.balance.toFixed(2)}€`;
 };
 // displayCalcBalance(account1.movements);
 
@@ -201,6 +208,21 @@ const withdrawals = movements.filter(mov => mov < 0); ////filter the movements a
 /* LOGIN event handles ------------------------------------ */
 let currentAccount;
 
+//FAKED LOGGED IN
+currentAccount = account1;
+updateInterface(currentAccount);
+containerApp.style.opacity = 100;
+
+
+const currentDate = new Date();
+const day = `${currentDate.getDate()}`.padStart(2, 0);
+const month = `${currentDate.getMonth() + 1}`.padStart(2, 0);
+const year = currentDate.getFullYear();
+const hour = currentDate.getHours();
+const minutes = `${currentDate.getMinutes()}`.padStart(2, 0);
+labelDate.textContent = `${day}/${month}/${year} ${hour}:${minutes} `;
+
+
 btnLogin.addEventListener('click', function (event) {
   event.preventDefault(); // prevent the form from submitting and prevent to reload the page
 
@@ -209,7 +231,7 @@ btnLogin.addEventListener('click', function (event) {
   if (currentAccount?.pin === +(inputLoginPin.value)) {
     // display UI and welcome message
     containerApp.style.opacity = 100;
-    labelWelcome.textContent = `Welcome back, ${currentAccount.owner.split(' ')[0]}!`;
+    labelWelcome.textContent = `Welcome back, ${currentAccount.owner.split(' ')[0]} !`;
 
     // Clear input fields 
     inputLoginUsername.value = "";
@@ -277,6 +299,6 @@ let sorted = false;
 
 btnSort.addEventListener('click', function (event) {
   event.preventDefault();
-  displayMovements(currentAccount.movements, !sorted);
+  displayMovements(currentAccount, !sorted);
   sorted = !sorted;
 });
