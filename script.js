@@ -22,7 +22,7 @@ const account1 = {
     '2023-07-23T10:51:36.790Z',
   ],
   currency: 'EUR',
-  locale: 'pt-PT', // de-DE
+  local: 'pt-PT', // de-DE
 };
 
 const account2 = {
@@ -42,7 +42,7 @@ const account2 = {
     '2020-07-26T12:01:20.894Z',
   ],
   currency: 'USD',
-  locale: 'en-US',
+  local: 'en-US',
 };
 
 const account3 = {
@@ -62,7 +62,7 @@ const account3 = {
     '2022-11-20T12:01:20.894Z',
   ],
   currency: 'BRL',
-  locale: 'pt-BR',
+  local: 'pt-BR',
 };
 
 const account4 = {
@@ -70,6 +70,19 @@ const account4 = {
   movements: [430, 1000, 700, 50, 90],
   interestRate: 1,
   pin: 4444,
+
+  movementsDates: [
+    '2021-11-01T13:15:33.035Z',
+    '2021-11-30T09:48:16.867Z',
+    '2022-12-25T06:04:23.907Z',
+    '2022-01-25T14:18:46.235Z',
+    '2023-12-05T16:33:06.386Z',
+    '2023-08-10T14:43:26.374Z',
+    '2023-09-25T18:49:59.371Z',
+    '2023-10-20T12:01:20.894Z',
+  ],
+  currency: 'EUR',
+  local: 'es-ES',
 };
 
 const accounts = [account1, account2, account3, account4];
@@ -116,7 +129,7 @@ const movements = [200, 450, -400, 3000, -650, -130, 70, 1300];
 /////////////////////////////////////////////////
 
 /* Format dates in general */
-const formatMovementDate = function (date) {
+const formatMovementDate = function (date, local) {
 
   const calcDaysPassed = (date1, date2) =>
     Math.round(Math.abs(date2 - date1) / (24 * 60 * 60 * 1000));
@@ -127,10 +140,7 @@ const formatMovementDate = function (date) {
   if (daysPassed === 1) return 'Yesterday';
   if (daysPassed <= 7) return `${daysPassed} days ago`;
   else {
-    const day = `${date.getDate()}`.padStart(2, 0);
-    const month = `${date.getMonth() + 1}`.padStart(2, 0);
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
+    return new Intl.DateTimeFormat(local).format(date);
   }
 }
 
@@ -146,7 +156,7 @@ const displayMovements = function (acc, sort = false) {
     const typeMov = mov > 0 ? `deposit` : `withdrawal`;
 
     const date = new Date(acc.movementsDates[i]);
-    const displayDate = formatMovementDate(date);
+    const displayDate = formatMovementDate(date, acc.local);
 
     const html = `
       <div class="movements__row">
@@ -231,15 +241,6 @@ updateInterface(currentAccount);
 containerApp.style.opacity = 100;
 
 
-const currentDate = new Date();
-const day = `${currentDate.getDate()}`.padStart(2, 0);
-const month = `${currentDate.getMonth() + 1}`.padStart(2, 0);
-const year = currentDate.getFullYear();
-const hour = `${currentDate.getHours()}`.padStart(2, 0);
-const minutes = `${currentDate.getMinutes()}`.padStart(2, 0);
-labelDate.textContent = `${day}/${month}/${year} ${hour}:${minutes} `;
-
-
 btnLogin.addEventListener('click', function (event) {
   event.preventDefault(); // prevent the form from submitting and prevent to reload the page
 
@@ -249,6 +250,18 @@ btnLogin.addEventListener('click', function (event) {
     // display UI and welcome message
     containerApp.style.opacity = 100;
     labelWelcome.textContent = `Welcome back, ${currentAccount.owner.split(' ')[0]} !`;
+
+    // Current date and time
+    const now = new Date();
+    const options = {
+      day: 'numeric',
+      month: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric'
+    }
+
+    labelDate.textContent = new Intl.DateTimeFormat(currentAccount.local, options).format(now);
 
     // Clear input fields 
     inputLoginUsername.value = "";
