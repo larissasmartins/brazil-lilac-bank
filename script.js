@@ -218,7 +218,7 @@ const currentDate = new Date();
 const day = `${currentDate.getDate()}`.padStart(2, 0);
 const month = `${currentDate.getMonth() + 1}`.padStart(2, 0);
 const year = currentDate.getFullYear();
-const hour = currentDate.getHours();
+const hour = currentDate.getHours().padStart(2, 0);
 const minutes = `${currentDate.getMinutes()}`.padStart(2, 0);
 labelDate.textContent = `${day}/${month}/${year} ${hour}:${minutes} `;
 
@@ -258,6 +258,10 @@ btnTransfer.addEventListener('click', function (event) {
     currentAccount.movements.push(-amount);
     receiverAcc.movements.push(amount);
 
+    //Add transfer date
+    currentAccount.movementsDates.push(new Date().toISOString());
+    receiverAcc.movementsDates.push(new Date().toISOString());
+
     updateInterface(currentAccount);
   };
 });
@@ -271,6 +275,9 @@ btnLoan.addEventListener('click', function (event) {
   if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
     //Add movement
     currentAccount.movements.push(amount);
+
+    //Add transfer date
+    currentAccount.movementsDates.push(new Date().toISOString());
 
     //Update Interface
     updateInterface(currentAccount);
