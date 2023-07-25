@@ -238,7 +238,36 @@ const withdrawals = movements.filter(mov => mov < 0); ////filter the movements a
 
 
 /* LOGIN event handles ------------------------------------ */
-let currentAccount;
+const startLogoutTimer = function () {
+  //Set the time to 5 min
+  let time = 300;
+
+  const tick = function () {
+    const min = String(Math.trunc(time / 60)).padStart(2, 0);
+    const sec = String(time % 60).padStart(2, 0);
+
+    // In each call, print the remaining time to UI
+    labelTimer.textContent = `${min}:${sec}`;
+
+    // When its 0 seconds, stop timer and logout user
+    if (time === 0) {
+      clearInterval(timer);
+      containerApp.style.opacity = 0;
+      labelWelcome.textContent = `Log in to get started `;
+    }
+    // Decrease 1s
+    time--;
+  };
+
+  //Call immediately
+  tick();
+  //Call the timer every second
+  timer = setInterval(tick, 1000);
+  return timer;
+};
+
+// Global variables
+let currentAccount, timer;
 
 btnLogin.addEventListener('click', function (event) {
   event.preventDefault(); // prevent the form from submitting and prevent to reload the page
@@ -267,6 +296,10 @@ btnLogin.addEventListener('click', function (event) {
     inputLoginPin.value = "";
     inputLoginPin.blur();
 
+    // Update timer according to the user
+    if (timer) clearInterval(timer);
+    timer = startLogoutTimer();
+
     updateInterface(currentAccount);
   }
 });
@@ -292,6 +325,10 @@ btnTransfer.addEventListener('click', function (event) {
     receiverAcc.movementsDates.push(new Date().toISOString());
 
     updateInterface(currentAccount);
+
+    // Reset timer
+    clearInterval(timer);
+    timer = startLogoutTimer();
   };
 });
 
@@ -315,6 +352,10 @@ btnLoan.addEventListener('click', function (event) {
     }, 3000);
   }
   inputLoanAmount.value = '';
+
+  // Reset timer
+  clearInterval(timer);
+  timer = startLogoutTimer();
 });
 
 
