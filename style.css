@@ -289,3 +289,11 @@ h2 {
 .timer {
   font-weight: 600;
 }
+
+.login-error {
+  display: none;
+  background-color: #ff000040;
+  float: right;
+  padding: 1px 3px;
+  order: 4;
+}
