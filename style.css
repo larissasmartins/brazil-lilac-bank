@@ -289,3 +289,62 @@ h2 {
 .timer {
   font-weight: 600;
 }
+
+.login-error {
+  display: none;
+  background-color: #ff000040;
+  float: right;
+  padding: 1px 3px;
+  order: 4;
+}
+
+/* Media query for small screens (e.g., mobile) */
+@media screen and (max-width: 768px) {
+  .app {
+      grid-template-columns: 1fr; /* Change to a single column layout */
+      grid-template-rows: auto repeat(3, 6rem) auto auto auto; /* Reorder the rows */
+      gap: 1rem; /* Reduce the gap between elements */
+
+      /* Additional styles for smaller screens */
+  }
+
+  /* Position operation divs inline */
+  .operation {
+      display: inline-block;
+      width: 100%; /* Take up full width */
+      margin: 0.5rem 0; /* Add vertical spacing between operation divs */
+  }
+
+  /* Adjust the layout of movements and balance */
+  .balance,
+  .movements {
+      grid-column: 1 / -1; /* Span all columns in a single row */
+  }
+}
+
+/* Media query for smaller screens (e.g., mobile) */
+@media screen and (max-width: 768px) {
+  nav {
+    flex-direction: column;
+    padding: 1rem;
+    gap: 10px;
+  }
+  .welcome {
+      font-size: 1.5rem; /* Reduce font size */
+      margin-bottom: 1rem; 
+      order: 2;
+  }
+  .logo {
+      height: 4.2rem; 
+      order: 1;
+  }
+  .login {
+      align-items: flex-start;
+      order: 3;
+      margin-left: 30px;
+  }
+  .login__input {
+      width: 100%; /* Make input fields full width */
+      margin-bottom: 1rem; /* Add spacing between input fields */
+  }
+}
