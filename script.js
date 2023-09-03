@@ -113,6 +113,8 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 const loginError = document.querySelector('.login-error');
+const showPassword = document.querySelector('.show-password-toggle');
+const closeAccountMessage = document.querySelector('.operation-close-message');
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
@@ -266,6 +268,15 @@ const startLogoutTimer = function () {
   return timer;
 };
 
+//Show and hide password
+const showPasswordToggle = function () {
+  if (inputLoginPin.type === "password") {
+    inputLoginPin.type = "text";
+  } else {
+    inputLoginPin.type = "password";
+  }
+}
+
 // Global variables
 let currentAccount, timer;
 
@@ -295,12 +306,15 @@ btnLogin.addEventListener('click', function (event) {
     inputLoginUsername.value = "";
     inputLoginPin.value = "";
     inputLoginPin.blur();
+    showPassword.style.display = "none";
+    loginError.style.display = "none";
 
     // Update timer according to the user
     if (timer) clearInterval(timer);
     timer = startLogoutTimer();
 
     updateInterface(currentAccount);
+
   } else {
     loginError.style.display = 'unset';
   }
@@ -314,9 +328,8 @@ btnTransfer.addEventListener('click', function (event) {
   const receiverAcc = accounts.find(acc => acc.username === inputTransferTo.value);
   const amount = +(inputTransferAmount.value);
   // Clear input fields 
-  inputLoginUsername.value = "";
-  inputLoginPin.value = "";
-  inputLoginPin.blur();
+  inputTransferTo.value = "";
+  inputTransferAmount.value = "";
 
   if (amount > 0 && receiverAcc && currentAccount.balance >= amount && receiverAcc.username !== currentAccount.username) {
     currentAccount.movements.push(-amount);
@@ -370,6 +383,7 @@ btnClose.addEventListener('click', function (event) {
 
     accounts.splice(index, 1); // Delete account
     containerApp.style.opacity = 0; // Hide UI
+    closeAccountMessage.style.display = "unset";
   };
 
   // Clear input fields 
