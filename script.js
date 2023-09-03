@@ -266,6 +266,14 @@ const startLogoutTimer = function () {
   return timer;
 };
 
+const showPasswordToggle = function () {
+  if (inputLoginPin.type === "password") {
+    inputLoginPin.type = "text";
+  } else {
+    inputLoginPin.type = "password";
+  }
+}
+
 // Global variables
 let currentAccount, timer;
 
