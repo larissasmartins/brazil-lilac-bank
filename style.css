@@ -24,6 +24,17 @@ nav {
   padding: 0 2rem;
 }
 
+.show-password-toggle {
+  display: flex;
+  align-items: center;
+  float: right;
+  margin-right: 50px;
+}
+
+input[type="checkbox"] {
+  margin-right: 5px;
+}
+
 .welcome {
   font-size: 1.9rem;
   font-weight: 500;
@@ -86,6 +97,7 @@ nav {
   grid-template-columns: 4fr 3fr;
   grid-template-rows: auto repeat(3, 15rem) auto;
   gap: 2rem;
+  padding: 0 2rem;
 
   /* NOTE This creates the fade in/out anumation */
   opacity: 0;
@@ -201,6 +213,12 @@ nav {
 }
 
 /* OPERATIONS */
+.operations {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 .operation {
   border-radius: 1rem;
   padding: 3rem 4rem;
@@ -217,6 +235,15 @@ nav {
 
 .operation--close {
   background-image: linear-gradient(to top left, #e52a5a, #ff585f);
+}
+
+.operation-close-message {
+  display: none;
+  margin: 50px auto 0;
+  font-size: clamp(15px, 6vw, 6px);
+  padding: 1rem;
+  line-height: 2;
+  text-align: center;
 }
 
 h2 {
@@ -308,10 +335,15 @@ h2 {
       /* Additional styles for smaller screens */
   }
 
+  .operations {
+    flex-direction: row !important;
+    justify-content: space-between;
+  } 
+
   /* Position operation divs inline */
   .operation {
       display: inline-block;
-      width: 100%; /* Take up full width */
+      width: 33%; 
       margin: 0.5rem 0; /* Add vertical spacing between operation divs */
   }
 

@@ -114,6 +114,7 @@ const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 const loginError = document.querySelector('.login-error');
 const showPassword = document.querySelector('.show-password-toggle');
+const closeAccountMessage = document.querySelector('.operation-close-message');
 
 /////////////////////////////////////////////////
 /////////////////////////////////////////////////
@@ -382,6 +383,7 @@ btnClose.addEventListener('click', function (event) {
 
     accounts.splice(index, 1); // Delete account
     containerApp.style.opacity = 0; // Hide UI
+    closeAccountMessage.style.display = "unset";
   };
 
   // Clear input fields 
